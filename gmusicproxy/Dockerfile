@@ -8,4 +8,6 @@ RUN pip3 install --no-cache-dir gmusicapi eyed3
 COPY GMusicProxy /GMusicProxy
 COPY run.sh /
 RUN chmod a+x /run.sh
+COPY get_path.sh /
+RUN chmod a+x /get_path.sh
 CMD ["/run.sh"]

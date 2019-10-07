@@ -36,6 +36,7 @@ import pprint
 import random
 import signal
 import socket
+import subprocess
 import sys
 import json
 import tempfile
@@ -1163,7 +1164,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in songs:
             if "id" in track or "nid" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s%sget_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
@@ -1174,6 +1175,7 @@ class GetHandler(BaseHTTPRequestHandler):
                     if config["extended_m3u"] and "album" in track else "",
                     config["host"],
                     config["port"],
+                    subprocess.check_output("/getpath.sh").decode('utf-8'),
                     track["id"] if "id" in track else track["nid"],
                 )
                 self.wfile.write(("%s\n" % line).encode("utf-8"))
