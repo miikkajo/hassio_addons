@@ -1,4 +1,7 @@
 #!/usr/bin/env bashio
 set -e
 bashio::log.info "Starting gmusicproxy..."
-/GMusicProxy --host 192.168.0.2 -P 9999
+PORT=bashio::config 'PORT'
+HOST=bashio::config 'HOST'
+
+/GMusicProxy --host $(echo $HOST) -P $(echo $PORT)

@@ -673,7 +673,7 @@ class GetHandler(BaseHTTPRequestHandler):
         for station in stations:
             if "id" in station:
                 if format.lower().strip() == "text":
-                    line = "%shttp://%s:%s/get_station?id=%s" % (
+                    line = "%s%s:%s/get_station?id=%s" % (
                         "%s%s" % (station["name"], separator) if
                         ("name" in station
                          and onlyUrl.lower().strip() != "yes") else "",
@@ -682,7 +682,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         station["id"],
                     )
                 else:
-                    line = "#EXTINF:-1,%s\nhttp://%s:%s/get_station?id=%s" % (
+                    line = "#EXTINF:-1,%s\n%s:%s/get_station?id=%s" % (
                         station["name"] if "name" in station else "",
                         config["host"],
                         config["port"],
@@ -711,7 +711,7 @@ class GetHandler(BaseHTTPRequestHandler):
                     curated_station_id=curatedId,
                 )
                 if format.lower().strip() == "text":
-                    line = "%shttp://%s:%s/get_station?id=%s" % (
+                    line = "%s%s:%s/get_station?id=%s" % (
                         "Listen Now - %s%s" % (name, separator) if
                         ("title" in situation
                          and onlyUrl.lower().strip() != "yes") else "Listen Now",
@@ -720,7 +720,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         stationId,
                     )
                 else:
-                    line = "#EXTINF:-1,%s\nhttp://%s:%s/get_station?id=%s" % (
+                    line = "#EXTINF:-1,%s\n%s:%s/get_station?id=%s" % (
                         "Listen Now - %s" % name,
                         config["host"],
                         config["port"],
@@ -752,7 +752,7 @@ class GetHandler(BaseHTTPRequestHandler):
                             artist_id=seed["artistId"],
                         )
                         if format.lower().strip() == "text":
-                            line = "%shttp://%s:%s/get_station?id=%s" % (
+                            line = "%s%s:%s/get_station?id=%s" % (
                                 "Listen Now - %s%s" % (artist, separator) if
                                 onlyUrl.lower().strip() != "yes" else "",
                                 config["host"],
@@ -760,7 +760,7 @@ class GetHandler(BaseHTTPRequestHandler):
                                 stationId,
                             )
                         else:
-                            line = "#EXTINF:-1,%s\nhttp://%s:%s/get_station?id=%s" % (
+                            line = "#EXTINF:-1,%s\n%s:%s/get_station?id=%s" % (
                                 "Listen Now - %s" % artist,
                                 config["host"],
                                 config["port"],
@@ -775,7 +775,7 @@ class GetHandler(BaseHTTPRequestHandler):
                     artist = info["artist"]
                     title = info["title"]
                     if format.lower().strip() == "text":
-                        line = "%shttp://%s:%s/get_album?id=%s" % (
+                        line = "%s%s:%s/get_album?id=%s" % (
                             "Listen Now - %s's %s%s" % (artist, title, separator) if
                             onlyUrl.lower().strip() != "yes" else "",
                             config["host"],
@@ -783,7 +783,7 @@ class GetHandler(BaseHTTPRequestHandler):
                             albumId,
                         )
                     else:
-                        line = "#EXTINF:-1,%s\nhttp://%s:%s/get_album?id=%s" % (
+                        line = "#EXTINF:-1,%s\n%s:%s/get_album?id=%s" % (
                             "Listen Now - %s's %s" % (artist, title),
                             config["host"],
                             config["port"],
@@ -812,7 +812,7 @@ class GetHandler(BaseHTTPRequestHandler):
                     useToken = True
 
                 if format.lower().strip() == "text":
-                    line = "%shttp://%s:%s/get_playlist?id=%s" % (
+                    line = "%s%s:%s/get_playlist?id=%s" % (
                         "%s%s" % (playlist["name"], separator) if
                         ("name" in playlist
                          and onlyUrl.lower().strip() != "yes") else "",
@@ -823,7 +823,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         if not useToken else playlist["shareToken"],
                     )
                 else:
-                    line = "#EXTINF:-1,%s\nhttp://%s:%s/get_playlist?id=%s" % (
+                    line = "#EXTINF:-1,%s\n%s:%s/get_playlist?id=%s" % (
                         playlist["name"] if "name" in playlist else "",
                         config["host"],
                         config["port"],
@@ -845,7 +845,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in station:
             if "nid" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
@@ -887,7 +887,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in station:
             if "nid" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
@@ -947,7 +947,7 @@ class GetHandler(BaseHTTPRequestHandler):
                                 break
 
                     if foundTrack:
-                        line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                        line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                             str(int(int(track["durationMillis"]) / 1000))
 
                             if "durationMillis" in foundTrack else -1,
@@ -991,7 +991,7 @@ class GetHandler(BaseHTTPRequestHandler):
         if "tracks" in album:
             for track in album["tracks"]:
                 if "nid" in track:
-                    line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                    line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                         str(int(int(track["durationMillis"]) / 1000))
 
                         if "durationMillis" in track else -1,
@@ -1027,7 +1027,7 @@ class GetHandler(BaseHTTPRequestHandler):
         if "topTracks" in artist:
             for track in artist["topTracks"]:
                 if "nid" in track:
-                    line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                    line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                         str(int(int(track["durationMillis"]) / 1000))
 
                         if "durationMillis" in track else -1,
@@ -1066,7 +1066,7 @@ class GetHandler(BaseHTTPRequestHandler):
             for album in artist["albums"]:
                 if "albumId" in album:
                     if format.lower().strip() == "text":
-                        line = "%shttp://%s:%s/get_album?id=%s" % (
+                        line = "%s%s:%s/get_album?id=%s" % (
                             "%s%s%s%s" % (album["name"], separator,
                                           album["year"], separator) if
                             ("name" in album and "year" in album
@@ -1076,7 +1076,7 @@ class GetHandler(BaseHTTPRequestHandler):
                             album["albumId"],
                         )
                     else:
-                        line = "#EXTINF:-1,%s [%s]\nhttp://%s:%s/get_album?id=%s" % (
+                        line = "#EXTINF:-1,%s [%s]\n%s:%s/get_album?id=%s" % (
                             album["name"] if "name" in album else "",
                             album["year"] if "year" in album else "",
                             config["host"],
@@ -1094,7 +1094,7 @@ class GetHandler(BaseHTTPRequestHandler):
             track = song["track"]
 
             if "storeId" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
@@ -1163,7 +1163,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in songs:
             if "id" in track or "nid" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
@@ -1198,7 +1198,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in songs:
             if "storeId" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\n%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
