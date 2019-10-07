@@ -11,13 +11,11 @@
   "homeassistant_api": true,
   "options": {
     "url":"http://192.168.1.2",
-    "port":"9999",
-    "extra_params": "-a"
+    "port":"9999"
 },
   "schema": {
     "url":"url",
-    "port":"port",
-    "extra_params": "str"
+    "port":"port"
 },
   "ports": {
     "9999/tcp": 9999
