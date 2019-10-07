@@ -5,7 +5,7 @@
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "application",
-  "ingress": true,
+  "ingress": false,
   "ingress_port": "9999",
   "boot": "auto",
   "homeassistant_api": true,
