@@ -1163,7 +1163,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         for track in songs:
             if "id" in track or "nid" in track:
-                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%sget_song?id=%s" % (
+                line = "#EXTINF:%s,%s%s%s\nhttp://%s:%s/get_song?id=%s" % (
                     str(int(int(track["durationMillis"]) / 1000))
 
                     if "durationMillis" in track else -1,
