@@ -1,6 +1,6 @@
 {
   "name": "gmusicproxy",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "slug": "gmusicproxy",
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -10,12 +10,14 @@
   "boot": "auto",
   "homeassistant_api": true,
   "options": {
-    "host":"http://192.168.1.2",
-    "port":"9999"
+    "url":"http://192.168.1.2",
+    "port":"9999",
+    "extra_params": "-a"
 },
   "schema": {
     "url":"url",
-    "port":"port"
+    "port":"port",
+    "extra_params": "str"
 },
   "ports": {
     "9999/tcp": 9999
