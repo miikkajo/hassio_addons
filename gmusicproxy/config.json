@@ -14,7 +14,7 @@
     "port":"9999"
 },
   "schema": {
-    "host":"url",
+    "url":"url",
     "port":"port"
 },
   "ports": {
