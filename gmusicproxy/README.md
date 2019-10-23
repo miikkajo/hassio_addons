@@ -12,7 +12,7 @@ added two functions:
 # get artists in collection:
 #curl http://192.168.0.2:9999/get_collection_artists_json
 
-# get albums in collection, or albums from speficic artist
+# get albums in collection, or albums from specific artist
 #curl http://192.168.0.2:9999/get_collection_albums_json?artist=death
 #["Individual Thought Patterns", "Scream bloody gore"]
 
