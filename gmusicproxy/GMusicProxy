@@ -206,7 +206,7 @@ class GetHandler(BaseHTTPRequestHandler):
             self._get_collection_albums_json(params["artist"][0] if "artist" in params else "All Artists")
         elif parsedPath.path == "/get_tracks_json":
             self._send_headers(200, 'application/json')
-            self._get_collection_albums_json(params["artist"][0] if "artist" in params else "All Artists",params["album"][0] if "album" in params else "All Albums")
+            self._get_tracks(params["artist"][0] if "artist" in params else "All Artists",params["album"][0] if "album" in params else "All Albums§")
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
                 200,
