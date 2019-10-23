@@ -1110,6 +1110,13 @@ class GetHandler(BaseHTTPRequestHandler):
                 self.wfile.write(("%s\n" % line).encode("utf-8"))
                 logger.debug(line)
 
+    def _get_tracks(self,artist,album):
+        tracks = []
+        for song in self.server.allSongsCache:
+            if ((artist == "All Artists") or (song['artist'].lower() == artist.lower()) -and (if album == "All Albums" -or song['album'].lower() == album.lower())):
+                tracks += "%s:%s/get_song?id=%s" % (config["host"],config["port"],track["id"] if "id" in track else track["nid"])
+        self.wfile.write(json.dumps(tracks).encode("utf-8"))
+
     def _get_collection_artists_json(self):
         if not hasattr(self.server, "allSongsCache"):
         	self._fetch_songs_list_cache()
