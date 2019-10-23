@@ -207,6 +207,10 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/get_tracks_json":
             self._send_headers(200, 'application/json')
             self._get_tracks(params["artist"][0] if "artist" in params else "All Artists",params["album"][0] if "album" in params else "All Albums")
+        elif parsedPath.path == "/get_track_json":
+            self._send_headers(200, 'application/json')
+            self._get_track_json()
+
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
                 200,
@@ -1120,6 +1124,12 @@ class GetHandler(BaseHTTPRequestHandler):
                 if album == "All Albums" or song['album'].lower() == album.lower():
                     tracks.append("{}:{}/get_song?id={}".format(config["host"],config["port"],song["id"] if "id" in song else song["nid"]))
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
+
+    def _get_track_json(self,track_id):
+        for song in self.server.allSongsCache:
+            if song[id] == track_id or song[nid] == track_id:
+                track = song["id"] if "id" in song else song["nid"]
+                self.wfile.write(json.dumps(track).encode("utf-8"))
 
     def _get_collection_artists_json(self):
         if not hasattr(self.server, "allSongsCache"):
