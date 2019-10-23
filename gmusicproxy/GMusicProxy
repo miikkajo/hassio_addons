@@ -1118,7 +1118,7 @@ class GetHandler(BaseHTTPRequestHandler):
         for song in self.server.allSongsCache:
             if artist == "All Artists" or song['artist'].lower() == artist.lower():
                 if album == "All Albums" or song['album'].lower() == album.lower():
-                    tracks += "%s:%s/get_song?id=%s" % (config["host"],config["port"],track["id"] if "id" in track else track["nid"])
+                    tracks += "%s:%s/get_song?id=%s" % (config["host"],config["port"],song["id"] if "id" in song else song["nid"])
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
 
     def _get_collection_artists_json(self):
