@@ -1,6 +1,6 @@
 {
   "name": "gmusicproxy",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "slug": "gmusicproxy",
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
