@@ -1130,8 +1130,7 @@ class GetHandler(BaseHTTPRequestHandler):
             return
         for song in self.server.allSongsCache:
             if song[id] == track_id or song[nid] == track_id:
-                track = song["id"] if "id" in song else song["nid"]
-                self.wfile.write(json.dumps(track).encode("utf-8"))
+                self.wfile.write(json.dumps(song).encode("utf-8"))
 
     def _get_collection_artists_json(self):
         if not hasattr(self.server, "allSongsCache"):
