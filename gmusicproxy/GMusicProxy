@@ -1131,7 +1131,8 @@ class GetHandler(BaseHTTPRequestHandler):
         if track_id == None:
             return
         for song in self.server.allSongsCache:
-            if song["id"] == track_id or song["nid"] == track_id:
+            if song['id'] == track_id or song['nid'] == track_id:
+                logger.info("respond with info for track: %s!",json.dumps(song))
                 self.wfile.write(json.dumps(song).encode("utf-8"))
 
     def _get_collection_artists_json(self):
