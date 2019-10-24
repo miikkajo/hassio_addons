@@ -201,6 +201,9 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/get_collection_artists_json":
             self._send_headers(200, 'application/json')
             self._get_collection_artists_json()
+        elif parsedPath.path == "/get_collection_json":
+            self._send_headers(200, 'application/json')
+            self._get_collection_json()
         elif parsedPath.path == "/get_collection_albums_json":
             self._send_headers(200, 'application/json')
             self._get_collection_albums_json(params["artist"][0] if "artist" in params else "All Artists")
@@ -1134,6 +1137,11 @@ class GetHandler(BaseHTTPRequestHandler):
             if song['id'] == track_id or song['nid'] == track_id:
                 logger.info("respond with info for track: %s!",json.dumps(song))
                 self.wfile.write(json.dumps(song).encode("utf-8"))
+
+    def _get_collection_json(self):
+        if not hasattr(self.server, "allSongsCache"):
+        	self._fetch_songs_list_cache()
+        self.wfile.write(json.dumps(self.server.allSongsCache).encode("utf-8"))
 
     def _get_collection_artists_json(self):
         if not hasattr(self.server, "allSongsCache"):
