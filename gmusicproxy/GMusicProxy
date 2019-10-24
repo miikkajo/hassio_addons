@@ -1126,6 +1126,7 @@ class GetHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
 
     def _get_track_json(self,track_id):
+        logger.information("request info for track: %s!",track_id)
         if track_id == None:
             return
         for song in self.server.allSongsCache:
