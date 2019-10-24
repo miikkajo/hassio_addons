@@ -207,9 +207,10 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/get_tracks_json":
             self._send_headers(200, 'application/json')
             self._get_tracks_json(params["artist"][0] if "artist" in params else "All Artists",params["album"][0] if "album" in params else "All Albums")
-        elif parsedPath.path == "/get_track_json":
+                
+        elif parsedPath.path == "/get_track_json" and "id" in params:
             self._send_headers(200, 'application/json')
-            self._get_track_json(params["id"][0])
+            self._get_track_json(track_id=params["id"][0])
 
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
