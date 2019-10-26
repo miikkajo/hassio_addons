@@ -214,6 +214,34 @@ class GetHandler(BaseHTTPRequestHandler):
             logger.info("/get_track_json")
             self._send_headers(200, 'application/json')
             self._get_track_json(track_id=params["id"][0])
+        elif parsedPath.path == "/new_track_queue":
+            self._send_headers(200, 'application/json')
+            self.server.tracks = []
+            self.server.track_index = 0
+            with open('/data/track_index', 'w') as outfile:
+                json.dump(self.server.track_index, outfile)
+            self._append_to_track_queue(
+                artist=params["artist"][0] if "artist" in params else "All Artists",
+                album=params["album"][0] if "album" in params else "All Albums"
+            )
+        elif parsedPath.path == "/append_to_track_queue":
+            self._send_headers(200, 'application/json')
+            self._append_to_track_queue(
+                artist = params["artist"][0] if "artist" in params else "All Artists",
+                album = params["album"][0] if "album" in params else "All Albums"
+            )
+        elif parsedPath.path == "/get_queue_json":
+            self._send_headers(200, 'application/json')
+            self._get_queue_json()
+        elif parsedPath.path == "/next_track":
+            self._send_headers(200, 'application/json')
+            self._next_track()
+        elif parsedPath.path == "/prev_track":
+            self._send_headers(200, 'application/json')
+            self._previous_track()
+        elif parsedPath.path == "/current_track":
+            self._send_headers(200, 'application/json')
+            self._current_track()
 
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
@@ -1129,8 +1157,56 @@ class GetHandler(BaseHTTPRequestHandler):
                     tracks.append(song["id"] if "id" in song else song["nid"])
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
 
+    def _get_queue_json(self):
+        self.wfile.write(json.dumps(self.server.tracks).encode("utf-8"))
+
+    def _append_to_track_queue(self,artist,album):
+        tracks = []
+        for song in self.server.allSongsCache:
+            if artist == "All Artists" or song['artist'].lower() == artist.lower():
+                if album == "All Albums" or song['album'].lower() == album.lower():
+                    tracks.append(song["id"] if "id" in song else song["nid"])
+        self.server.tracks += tracks
+        with open('/data/queue.json', 'w') as outfile:
+            json.dump(self.server.tracks, outfile)
+        self.wfile.write(("{} tracks added to queue".format(len(tracks)) ).encode("utf-8"))
+
+    def _previous_track(self):
+        if not hasattr(self.server,'track_index'):
+            self.server.track_index = 0
+        elif self.server.track_index > 0:
+            self.server.track_index -= 1
+        elif self.server.track_index == 0:
+            self.server.track_index = len(self.server.tracks) - 1
+        else:
+            self.server.track_index == 0
+        with open('/data/track_index', 'w') as outfile:
+            json.dump(self.server.track_index, outfile)
+        logger.info("current track_index: %s",self.server.track_index)
+        self._get_track_json(self.server.tracks[self.server.track_index])
+
+    def _next_track(self):
+        if not hasattr(self.server,'track_index'):
+            self.server.track_index = 0
+        elif self.server.track_index < (len(self.server.tracks) -1):
+            self.server.track_index += 1 
+        else:
+            self.server.track_index = 0
+        with open('/data/track_index', 'w') as outfile:
+            json.dump(self.server.track_index, outfile)
+        logger.info("current track_index: %s",self.server.track_index)
+        self._get_track_json(self.server.tracks[self.server.track_index])
+
+    def _current_track(self):
+        logger.info("current track_index: %s",self.server.track_index)
+        if not hasattr(self.server,'track_index'):
+            return
+        if len(self.server.tracks) == 0:
+            return
+        self._get_track_json(track_id=self.server.tracks[self.server.track_index])
+
     def _get_track_json(self,track_id):
-        logger.info("request info for track: %s!",track_id)
+        logger.info("request info for track: %s",track_id)
         if track_id == None:
             return
         for song in self.server.allSongsCache:
@@ -1696,6 +1772,21 @@ if __name__ == "__main__":
     logger.info("Pre-fetching list of songs in collection")
     server.lock = threading.Lock()
     server.allSongsCache = api.get_all_songs()
+    try:
+        with open('/data/queue.json',"r") as inputfile:
+            server.tracks = json.load(inputfile)
+    except IOError:
+        logger.info('unable to load queue from file')
+        server.tracks = []
+
+    try:
+        with open('/data/track_index',"r") as inputfile:
+            server.track_index = int(json.load(inputfile))
+            if server.track_index < 0 or server.track_index > (len(server.tracks) -1):
+                server.track_index = 0
+    except IOError:
+        logger.info('unable to track_index from file')
+        server.track_index = 0
 
     logger.info("Listening on %s:%s...", config["bind_address"],
                 config["port"])
