@@ -198,6 +198,20 @@ class GetHandler(BaseHTTPRequestHandler):
                 if "rating" in params else 0,
                 shuffle=True if ("shuffle" in params and params["shuffle"][0] == "yes") else False,
             )
+
+        ##  FUNCTIONS FOR JSON API ##
+        elif parsedPath.path == "/get_stations_json":
+            self._send_headers(200, 'application/json')
+            self._get_stations_json()
+        elif parsedPath.path == "/get_station_json" and "name" in params:
+            self._send_headers(200, 'application/json')
+            self._get_station_json(name=params["name"][0],numTracks=params["numtracks"][0] if "numtracks" in params else "999")
+        elif parsedPath.path == "/get_playlists_json":
+            self._send_headers(200, 'application/json')
+            self._get_playlists_json()
+        elif parsedPath.path == "/get_playlist_json" and "name" in params:
+            self._send_headers(200, 'application/json')
+            self._get_playlist_json(name=params["name"][0])
         elif parsedPath.path == "/get_collection_artists_json":
             self._send_headers(200, 'application/json')
             self._get_collection_artists_json()
@@ -214,6 +228,8 @@ class GetHandler(BaseHTTPRequestHandler):
             logger.info("/get_track_json")
             self._send_headers(200, 'application/json')
             self._get_track_json(track_id=params["id"][0])
+
+        ## FUNCTIONS FOR QUEUE HANDLNG ##
         elif parsedPath.path == "/new_track_queue":
             self._send_headers(200, 'application/json')
             self.server.tracks = []
@@ -242,6 +258,7 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/current_track":
             self._send_headers(200, 'application/json')
             self._current_track()
+        #####
 
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
@@ -1216,6 +1233,40 @@ class GetHandler(BaseHTTPRequestHandler):
             else:            
                 if song['nid'] == track_id:
                     self.wfile.write(json.dumps(song).encode("utf-8"))
+
+    def _get_playlists_json(self):
+        playlists = []
+        _all_playlists = self._robust_retry(lambda: api.get_all_playlists())
+        for playlist in _all_playlists:
+            playlists.append(playlist["name"])      
+        self.wfile.write(json.dumps(playlists).encode("utf-8"))
+
+    def _get_playlist_json(self,name,numTracks=999):
+        tracks = []
+        _all_playlists = api.get_all_user_playlist_contents()
+        for playlist in _all_playlists:
+            if playlist["name"] == name:
+                for track in playlist["tracks"]:
+                    tracks.append(track["trackId"])
+            
+        self.wfile.write(json.dumps(tracks).encode("utf-8"))
+
+    def _get_stations_json(self):
+        stations = []
+        _all_stations = self._robust_retry(lambda: api.get_all_stations())
+        for station in _all_stations:
+            stations.append(station["name"])
+        self.wfile.write(json.dumps(stations).encode("utf-8"))
+
+    def _get_station_json(self,name,numTracks=999):
+        tracks = []
+        _all_stations = self._robust_retry(lambda: api.get_all_stations())
+        for station in _all_stations:
+            if station["name"] == name:
+                _station = self._robust_retry(lambda: api.get_station_tracks(station_id=station["id"], num_tracks=numTracks))
+                for track in _station:
+                    tracks.append(track["nid"])
+        self.wfile.write(json.dumps(tracks).encode("utf-8"))
 
     def _get_collection_json(self):
         if not hasattr(self.server, "allSongsCache"):
