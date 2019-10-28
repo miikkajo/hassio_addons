@@ -1,20 +1,100 @@
-HomeAssistant add-on for gmusicproxy
+#  HomeAssistant add-on for gmusicproxy (with extensions)
 
 Code forked from:
 https://github.com/M0Rf30/gmusicproxy
 
-Create oauth token and copy it to add-on data directory 
-like so:
-'../addons/data/local_gmusicproxy/mobileclient.cred'
+## HOWTO
 
-added two functions:
+### How to install addon to hass.io ?
 
-# get artists in collection:
-#curl http://192.168.0.2:9999/get_collection_artists_json
+1) In homeassistant select hass.io from left panel
+2) Go to ADD-ON STORE
+3) Add new repository with url: https://github.com/miikkajo/hassio_addons
+4) Refresh repositories with refresh button up right 
+5) Select gmusicproxy addon and click install
 
-# get albums in collection, or albums from specific artist
-#curl http://192.168.0.2:9999/get_collection_albums_json?artist=death
-#["Individual Thought Patterns", "Scream bloody gore"]
+### How to create oauth credentials?
+
+#### enter to bash session inside docker:
+
+docker exec -i -t addon_f8f3f8ff_gmusicproxy bash
+
+#### in bash perform oath:   
+./GMusicProxy -o
+
+#### Copy url from console to browser and authenticate and paste key to back to prompt:
+Visit the following url: [Authentication url]
+
+Follow the prompts, then paste the auth code here and hit enter:
+
+[Paste authentication code]
+
+Done.
+
+### this will create mobileclient.cred in /data directory for future oauth logins
+
+
+
+# Added extensions
+
+## Functions to return json data for external players
+
+#### Get names of artists in collection:
+/get_collection_artists_json  
+params None  
+http://192.168.1.1:9999/get_collection_artists_json
+
+#### Get names of albums in collection
+/get_collection_albums_json  
+params artist, album  
+http://192.168.1.1:9999/get_collection_albums_json?artist=death&album=human
+
+#### Return track id's, filter with artist and album names
+/get_tracks_json  
+params artist, album  
+http://192.168.1.1:9999/get_tracks_json?artist=William%20Shatner  
+
+#### Return track object
+/get_track_json   
+params id  
+http://192.168.1.1:9999/get_track_json?id=4cb3a344-65ca-39f4-b1ee-ae27de0cf3ac
+
+#### still in progress:
+/get_stations_json  
+/get_station_json  
+/get_playlists_json  
+/get_playlist_json  
+
+## Functions for queue handling
+**note, work in progress**
+
+Big idea of gmusicproxy queue is to have static queue that can withstand hass restart  
+Queue is stored in queue.json file in /data  
+Queue index is also stored in track_index file
+
+
+### Create new queue of tracks
+#### clear existing queue and generate new 
+/new_track_queue  
+params artist,album
+http://192.168.1.1:9999/new_track_queue?album=has%20been
+
+### Add tracks to queue
+/append_to_track_queue  
+params artist,album  
+http://192.168.1.1:9999/append_to_track_queue?artist=death
+
+### List track id's from queue 
+/get_queue_json
+
+### Advance track_index and return track id 
+/next_track  
+
+### Reduce track_index and return track id
+/prev_track  
+
+### Return current track id
+/current_track
 
 
 

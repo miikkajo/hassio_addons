@@ -1,5 +1,5 @@
 {
     "name": "miikkajo add-on repository",
-    "url": "https://home-assistant.io/",
+    "url": "https://github.com/miikkajo/hassio_addons",
     "maintainer": "miikkajo"
   }

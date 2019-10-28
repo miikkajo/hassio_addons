@@ -1175,6 +1175,9 @@ class GetHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
 
     def _get_queue_json(self):
+        queue = []
+        for track in self.server.tracks:
+            queue.append(self._get_track_json(track_id=track).title)
         self.wfile.write(json.dumps(self.server.tracks).encode("utf-8"))
 
     def _append_to_track_queue(self,artist,album):
@@ -1222,17 +1225,23 @@ class GetHandler(BaseHTTPRequestHandler):
             return
         self._get_track_json(track_id=self.server.tracks[self.server.track_index])
 
-    def _get_track_json(self,track_id):
+    def _get_track(self,track_id):
         logger.info("request info for track: %s",track_id)
         if track_id == None:
             return
         for song in self.server.allSongsCache:
             if "id" in song:
                 if song['id'] == track_id:
-                    self.wfile.write(json.dumps(song).encode("utf-8"))
+                    return song
             else:            
                 if song['nid'] == track_id:
-                    self.wfile.write(json.dumps(song).encode("utf-8"))
+                    return song
+
+    def _get_track_json(self,track_id):
+        logger.info("request info for track: %s",track_id)
+        if track_id == None:
+            return
+        self.wfile.write(json.dumps(self._get_track(track_id)).encode("utf-8"))
 
     def _get_playlists_json(self):
         playlists = []
@@ -1703,7 +1712,7 @@ def getOptions():
 
 def initOauth2(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS):
     api = gmusicapi.Mobileclient()
-    api.perform_oauth(open_browser=True)
+    api.perform_oauth(storage_filepath=u'/data/mobileclient.cred',open_browser=False)
     api.oauth_login(device_id)
 
 
