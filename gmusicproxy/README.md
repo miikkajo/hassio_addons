@@ -23,18 +23,14 @@ docker exec -i -t addon_f8f3f8ff_gmusicproxy bash
 ./GMusicProxy -o
 
 #### Copy url from console to browser and authenticate and paste key to back to prompt:
-Visit the following url: [Authentication url]
-
-Follow the prompts, then paste the auth code here and hit enter:
-
-[Paste authentication code]
-
+Visit the following url: [Authentication url]  
+Follow the prompts, then paste the auth code here and hit enter:  
+[Paste authentication code]  
 Done.
 
-### this will create mobileclient.cred in /data directory for future oauth logins
+This will create mobileclient.cred in /data directory for future oauth logins
 
-
-
+***
 # Added extensions
 
 ## Functions to return json data for external players

@@ -53,6 +53,7 @@ import gmusicapi.utils
 import requests
 from gmusicapi.exceptions import CallFailure
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from jinja2 import Template
 
 try:
     import daemon
@@ -200,6 +201,9 @@ class GetHandler(BaseHTTPRequestHandler):
             )
 
         ##  FUNCTIONS FOR JSON API ##
+        elif parsedPath.path == "/browser":
+            self._send_headers(200, 'text/html')
+            self._browser()
         elif parsedPath.path == "/get_stations_json":
             self._send_headers(200, 'application/json')
             self._get_stations_json()
@@ -231,7 +235,7 @@ class GetHandler(BaseHTTPRequestHandler):
 
         ## FUNCTIONS FOR QUEUE HANDLNG ##
         elif parsedPath.path == "/new_track_queue":
-            self._send_headers(200, 'application/json')
+            self._send_headers(200, 'text/html')
             self.server.tracks = []
             self.server.track_index = 0
             with open('/data/track_index', 'w') as outfile:
@@ -241,7 +245,7 @@ class GetHandler(BaseHTTPRequestHandler):
                 album=params["album"][0] if "album" in params else "All Albums"
             )
         elif parsedPath.path == "/append_to_track_queue":
-            self._send_headers(200, 'application/json')
+            self._send_headers(200, 'text/html')
             self._append_to_track_queue(
                 artist = params["artist"][0] if "artist" in params else "All Artists",
                 album = params["album"][0] if "album" in params else "All Albums"
@@ -1165,6 +1169,129 @@ class GetHandler(BaseHTTPRequestHandler):
                 )
                 self.wfile.write(("%s\n" % line).encode("utf-8"))
                 logger.debug(line)
+
+    def _browser(self,artist = "All Artists",album="All Albums"):
+        artists = ["All Artists"]
+        for song in self.server.allSongsCache:
+            if song['artist'] not in artists:
+                if song['artist'] == "" and "unknown" not in artists:
+                    artists.append("unknown")
+                else:
+                    artists.append(song['artist'])
+
+        albums = ["All Albums"]
+        for song in self.server.allSongsCache:
+            if (artist == "All Artists") or (song['artist'].lower() == artist.lower()):
+                if song['album'] not in albums:
+                    if song['album'] == "" and "unknown" not in albums:
+                        albums.append("unknown")
+                    else:
+                        albums.append(song['album'])
+
+        template = """ 
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<script>        
+function getalbums()
+{
+        artist = $("#artists option:selected").text();
+        $.ajax({
+            url: "http://192.168.1.2:9998/get_collection_albums_json",
+            data:{
+                artist : $("#artists option:selected").text()
+            },
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                console.log(data);
+                var options = '';
+                $.each(data, function (key, value) {
+                    options += '<option>' + value + '</option>';
+                });
+                $('#albums option').remove();
+                $('#albums').append(options);
+            },
+            error(jqXHR, textStatus, errorThrown) {
+                alert('Something wrong happened because: ' + errorThrown)
+            }
+        });
+}
+function getartists()
+{
+    $.ajax({
+            url: "http://192.168.1.2:9998/get_collection_artists_json",
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                console.log(data);
+                var options = '';
+                $.each(data, function (key, value) {
+                    options += '<option>' + value + '</option>';
+                });
+                $('#artists option').remove();
+                $('#artists').append(options);
+            },
+            error(jqXHR, textStatus, errorThrown) {
+                alert('Something wrong happened because: ' + errorThrown)
+            }
+        });
+}
+function new_track_queue()
+{
+    $.ajax({
+            type: "GET",
+            url: "http://192.168.1.2:9998/new_track_queue",
+            data:{
+                artist : $("#artists option:selected").text(),
+                album : $("#albums option:selected").text()
+            },
+            success: function (data) {
+                alert(data);
+            },
+            error(jqXHR, textStatus, errorThrown) {
+                alert('Something wrong happened because: ' + errorThrown)
+            }
+        });
+}
+
+function append_to_queue()
+{
+    $.ajax({
+            type: "GET",
+            url: "http://192.168.1.2:9998/append_to_track_queue",
+            data:{
+                artist : $("#artists option:selected").text(),
+                album : $("#albums option:selected").text()
+            },
+            success: function (data) {
+                alert(data);
+            }
+        });
+}
+$(document).ready(function(){
+  $('.artists').select2();
+  $('.albums').select2();
+  getartists();
+  getalbums();
+  $(".artists").change(getalbums);
+});</script>
+        </head>
+        <body>
+        <select style="width: 300px" class="artists" id="artists"></select><br>
+        <select style="width: 300px" class="albums" id="albums"></select><br>
+        <input type="button" class="appendbtn" value="Append to Queue" onclick="append_to_queue()">
+        <input type="button" class="newbtn" value="Create new Queue" onclick="new_track_queue()">
+        </body>
+        </html>"""
+        self.wfile.write(template.encode("utf-8"))
+    
 
     def _get_tracks_json(self,artist,album):
         tracks = []
