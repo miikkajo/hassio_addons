@@ -1201,7 +1201,7 @@ function getalbums()
 {
         artist = $("#artists option:selected").text();
         $.ajax({
-            url: "/get_collection_albums_json",
+            url: "{{ host }}/get_collection_albums_json",
             data:{
                 artist : $("#artists option:selected").text()
             },
@@ -1225,7 +1225,7 @@ function getalbums()
 function getartists()
 {
     $.ajax({
-            url: "/get_collection_artists_json",
+            url: "{{ host }}/get_collection_artists_json",
             dataType: "json",
             type: "GET",
             async: true,
@@ -1247,7 +1247,7 @@ function new_track_queue()
 {
     $.ajax({
             type: "GET",
-            url: "/new_track_queue",
+            url: "{{ host }}/new_track_queue",
             data:{
                 artist : $("#artists option:selected").text(),
                 album : $("#albums option:selected").text()
@@ -1265,7 +1265,7 @@ function append_to_queue()
 {
     $.ajax({
             type: "GET",
-            url: "/append_to_track_queue",
+            url: "{{ host }}/append_to_track_queue",
             data:{
                 artist : $("#artists option:selected").text(),
                 album : $("#albums option:selected").text()
@@ -1290,7 +1290,7 @@ $(document).ready(function(){
         <input type="button" class="newbtn" value="Create new Queue" onclick="new_track_queue()">
         </body>
         </html>"""
-        html=Template(template).render(host=config['host'],port=config['port'])
+        html=Template(template).render(host=config['host'])
         self.wfile.write(html.encode("utf-8"))
     
 
