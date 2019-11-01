@@ -1201,7 +1201,7 @@ function getalbums()
 {
         artist = $("#artists option:selected").text();
         $.ajax({
-            url: "{{ host }}:{{ port }}/get_collection_albums_json",
+            url: "/get_collection_albums_json",
             data:{
                 artist : $("#artists option:selected").text()
             },
@@ -1225,7 +1225,7 @@ function getalbums()
 function getartists()
 {
     $.ajax({
-            url: "{{ host }}:{{ port }}/get_collection_artists_json",
+            url: "/get_collection_artists_json",
             dataType: "json",
             type: "GET",
             async: true,
@@ -1247,7 +1247,7 @@ function new_track_queue()
 {
     $.ajax({
             type: "GET",
-            url: "{{ host }}:{{ port }}/new_track_queue",
+            url: "/new_track_queue",
             data:{
                 artist : $("#artists option:selected").text(),
                 album : $("#albums option:selected").text()
@@ -1265,7 +1265,7 @@ function append_to_queue()
 {
     $.ajax({
             type: "GET",
-            url: "{{ host }}:{{ port }}/append_to_track_queue",
+            url: "/append_to_track_queue",
             data:{
                 artist : $("#artists option:selected").text(),
                 album : $("#albums option:selected").text()
