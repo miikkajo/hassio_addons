@@ -1210,7 +1210,7 @@ function getalbums()
             async: true,
             success: function (data) {
                 console.log(data);
-                var options = '';
+                var options = 'All Albums';
                 $.each(data, function (key, value) {
                     options += '<option>' + value + '</option>';
                 });
@@ -1231,7 +1231,7 @@ function getartists()
             async: true,
             success: function (data) {
                 console.log(data);
-                var options = '';
+                var options = 'All Artists';
                 $.each(data, function (key, value) {
                     options += '<option>' + value + '</option>';
                 });

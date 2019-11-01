@@ -1,12 +1,13 @@
 {
   "name": "gmusicproxy",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "slug": "gmusicproxy",
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "application",
-  "ingress": false,
+  "ingress": true,
   "ingress_port": "9999",
+  "ingress_entry": "/browser",
   "boot": "auto",
   "homeassistant_api": true,
   "options": {
