@@ -1305,12 +1305,21 @@ $(document).ready(function(){
     def _get_queue_json(self):
         queue = []
         for track in self.server.tracks:
-            queue.append(self._get_track_json(track_id=track).title)
-        self.wfile.write(json.dumps(self.server.tracks).encode("utf-8"))
+            song = self._get_track(track_id=track)
+            if song:
+                queue.append("{0} - {1} - {2}. {3}".format(
+                    song['artist']      if 'artist'      in song else "unknown",
+                    song['album']       if 'album'       in song else "unknown",
+                    song['trackNumber'] if 'trackNumber' in song else "unknown",
+                    song['title']       if 'title'       in song else "unknown"
+                ))
+        self.wfile.write(json.dumps(queue).encode("utf-8"))
 
     def _append_to_track_queue(self,artist,album):
         tracks = []
-        for song in self.server.allSongsCache:
+        songs = self.server.allSongsCache
+        songs.sort(key = lambda i: (i["artist"],i["album"],i["trackNumber"]))
+        for song in songs:
             if artist == "All Artists" or song['artist'].lower() == artist.lower():
                 if album == "All Albums" or song['album'].lower() == album.lower():
                     tracks.append(song["id"] if "id" in song else song["nid"])
@@ -1354,7 +1363,6 @@ $(document).ready(function(){
         self._get_track_json(track_id=self.server.tracks[self.server.track_index])
 
     def _get_track(self,track_id):
-        logger.info("request info for track: %s",track_id)
         if track_id == None:
             return
         for song in self.server.allSongsCache:
@@ -1366,7 +1374,6 @@ $(document).ready(function(){
                     return song
 
     def _get_track_json(self,track_id):
-        logger.info("request info for track: %s",track_id)
         if track_id == None:
             return
         self.wfile.write(json.dumps(self._get_track(track_id)).encode("utf-8"))
