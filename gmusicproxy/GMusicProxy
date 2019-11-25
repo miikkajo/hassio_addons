@@ -262,8 +262,10 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/current_track":
             self._send_headers(200, 'application/json')
             self._current_track()
-        #####
-
+        elif parsedPath.path == "/update_song_cache":
+            self._send_headers(200, 'application/json')
+            self._fetch_songs_list_cache()
+        #####            
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
                 200,
