@@ -234,6 +234,10 @@ class GetHandler(BaseHTTPRequestHandler):
             self._get_track_json(track_id=params["id"][0])
 
         ## FUNCTIONS FOR QUEUE HANDLNG ##
+        
+        elif parsedPath.path == "/shuffle_queue":
+            self._send_headers(200, 'text/html')
+            self._shuffle_queue()
         elif parsedPath.path == "/new_track_queue":
             self._send_headers(200, 'text/html')
             self.server.tracks = []
@@ -1331,13 +1335,16 @@ $(document).ready(function(){
             json.dump(self.server.tracks, outfile)
         self.wfile.write(("{} tracks added to queue".format(len(tracks)) ).encode("utf-8"))
 
-    def _suffle_playlist(self):
+    def _shuffle_queue(self):
         tracks = []
         try:
             with open('/data/queue.json',"r+") as playlistfile:
                 tracks = json.load(playlistfile)
                 random.shuffle(tracks)
                 json.dump(self.server.tracks, playlistfile)
+            self.server.track_index == None
+            with open('/data/track_index', 'w') as outfile:
+                json.dump(self.server.track_index, outfile)
         except IOError:
             logger.info('unable to load queue from file')
             server.tracks = []
