@@ -1331,6 +1331,17 @@ $(document).ready(function(){
             json.dump(self.server.tracks, outfile)
         self.wfile.write(("{} tracks added to queue".format(len(tracks)) ).encode("utf-8"))
 
+    def _suffle_playlist(self):
+        tracks = []
+        try:
+            with open('/data/queue.json',"r+") as playlistfile:
+                tracks = json.load(playlistfile)
+                random.shuffle(tracks)
+                json.dump(self.server.tracks, playlistfile)
+        except IOError:
+            logger.info('unable to load queue from file')
+            server.tracks = []
+
     def _previous_track(self):
         if not hasattr(self.server,'track_index'):
             self.server.track_index = 0
@@ -1397,7 +1408,7 @@ $(document).ready(function(){
                     tracks.append(track["trackId"])
             
         self.wfile.write(json.dumps(tracks).encode("utf-8"))
-
+        
     def _get_stations_json(self):
         stations = []
         _all_stations = self._robust_retry(lambda: api.get_all_stations())
