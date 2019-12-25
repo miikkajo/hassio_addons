@@ -82,7 +82,7 @@ $('#albums').select2();
 $('#queue').select2();
 getartists();
 getalbums();
-$(".artists").change(getalbums);
+$("#artists").change(getalbums);
 
 $("#RefreshQueue").click(function()
 {
@@ -122,6 +122,19 @@ $("#NewQueue").click(function()
         });
 })
 
+$("#ShuffleQueue").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/shuffle_queue",
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
 });
 </script>
 </head>
