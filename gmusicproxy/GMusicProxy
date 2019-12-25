@@ -245,12 +245,17 @@ class GetHandler(BaseHTTPRequestHandler):
             self._send_headers(200, 'text/html')
             self.server.tracks = []
             self.server.track_index = 0
+            artist  = None
+            album   = None
+            station = None
             with open('/data/track_index', 'w') as outfile:
                 json.dump(self.server.track_index, outfile)
-            self._append_to_track_queue(
-                artist=params["artist"][0] if "artist" in params else "All Artists",
-                album=params["album"][0] if "album" in params else "All Albums"
-            )
+                if "station" in params:
+                    station = params["station"][0]
+                else:
+                    artist = params["artist"][0] if "artist" in params else "All Artists",
+                    album  = params["album"][0] if "album" in params else "All Albums"        
+            self._append_to_track_queue(station=station,artist=artist,album=album)
         elif parsedPath.path == "/append_to_track_queue":
             self._send_headers(200, 'text/html')
             self._append_to_track_queue(
