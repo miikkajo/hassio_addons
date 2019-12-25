@@ -16,7 +16,7 @@ $.ajax({
     },
     dataType: "json",
     type: "GET",
-    async: true,
+    async: false,
     success: function (data) {
         console.log(data);
         var options = "<option>All Albums</option>";
@@ -31,6 +31,28 @@ $.ajax({
     }
 });
 }
+function getqueue()
+{
+$.ajax({
+    url: "{{ host }}/get_queue_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (data) {
+        console.log(data);
+        var options = "<option>Current Queue</option>";
+        $.each(data, function (key, value) {
+            options += '<option>' + value + '</option>';
+        });
+        $('#queue option').remove();
+        $('#queue').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
 function getartists()
 {
 $.ajax({
@@ -68,6 +90,7 @@ $.ajax({
         alert('Something wrong happened because: ' + errorThrown)
     }
 });
+getqueue();	
 }
 
 function append_to_queue()
@@ -83,12 +106,15 @@ $.ajax({
         alert(data);
     }
 });
+getqueue();	
 }
 $(document).ready(function(){
 $('.artists').select2();
 $('.albums').select2();
+$('.queue').select2();
 getartists();
 getalbums();
+getqueue();	
 $(".artists").change(getalbums);
 });</script>
 </head>
@@ -97,5 +123,6 @@ $(".artists").change(getalbums);
 <select style="width: 300px" class="albums" id="albums"></select><br>
 <input type="button" class="appendbtn" value="Append to Queue" onclick="append_to_queue()">
 <input type="button" class="newbtn" value="Create new Queue" onclick="new_track_queue()">
+<select style="width: 300px" class="queue" id="queue"></select><br>
 </body>
 </html>
