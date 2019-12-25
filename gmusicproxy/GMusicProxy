@@ -1232,12 +1232,13 @@ class GetHandler(BaseHTTPRequestHandler):
         self.server.tracks += tracks
         with open('/data/queue.json', 'w') as outfile:
             json.dump(self.server.tracks, outfile)
-        self.wfile.write(("{} tracks added to queue".format(len(tracks)) ).encode("utf-8"))
+        self.wfile.write(json.dumps({'result':'ok','message':'{0} tracks added to queue, total {1}!'.format(len(tracks),len(self.server.tracks))}).encode("utf-8"))
 
     def _shuffle_queue(self):
         random.shuffle(self.server.tracks)
         with open('/data/queue.json', 'w') as outfile:
             json.dump(self.server.tracks, outfile)
+        self.wfile.write(json.dumps({'result':'ok','message':'Queue reordered!'}).encode("utf-8"))
 
     def _previous_track(self):
         if not hasattr(self.server,'track_index'):
