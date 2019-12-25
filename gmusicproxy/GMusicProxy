@@ -1245,6 +1245,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         tracks.append(song["id"] if "id" in song else song["nid"])
             self.server.tracks += tracks
         if station:
+            logger.debug("add station to queue:{}".format(station))
             tracks = self._get_station_json(name=station)
             self.server.tracks += tracks
 
