@@ -1240,7 +1240,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         tracks.append(song["id"] if "id" in song else song["nid"])
             self.server.tracks += tracks
         if station:
-            tracks = self._get_station_json(station)
+            tracks = self._get_station_json(name=station)
             self.server.tracks += tracks
 
         with open('/data/queue.json', 'w') as outfile:
@@ -1341,7 +1341,7 @@ class GetHandler(BaseHTTPRequestHandler):
                 _station = self._robust_retry(lambda: api.get_station_tracks(station_id=station["id"], num_tracks=numTracks))
                 for track in _station:
                     tracks.append(track["nid"])
-        self.wfile.write(json.dumps(tracks).encode("utf-8"))
+        return tracks
 
     def _get_collection_json(self):
         if not hasattr(self.server, "allSongsCache"):
