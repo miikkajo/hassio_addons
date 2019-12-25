@@ -238,6 +238,9 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/shuffle_queue":
             self._send_headers(200, 'text/html')
             self._shuffle_queue()
+        elif parsedPath.path == "/clear_queue":
+            self._send_headers(200, 'text/html')
+            self._clear_queue()
         elif parsedPath.path == "/new_track_queue":
             self._send_headers(200, 'text/html')
             self.server.tracks = []
@@ -1221,18 +1224,28 @@ class GetHandler(BaseHTTPRequestHandler):
                 ))
         self.wfile.write(json.dumps(queue).encode("utf-8"))
 
-    def _append_to_track_queue(self,artist,album):
-        tracks = []
-        songs = self.server.allSongsCache
-        songs.sort(key = lambda i: (i["artist"],i["album"],i["trackNumber"]))
-        for song in songs:
-            if artist == "All Artists" or song['artist'].lower() == artist.lower():
-                if album == "All Albums" or song['album'].lower() == album.lower():
-                    tracks.append(song["id"] if "id" in song else song["nid"])
-        self.server.tracks += tracks
+    def _append_to_track_queue(self,artist=None,album=None,station=None):
+        if artist or album:
+            tracks = []
+            songs = self.server.allSongsCache
+            songs.sort(key = lambda i: (i["artist"],i["album"],i["trackNumber"]))
+            for song in songs:
+                if artist == "All Artists" or song['artist'].lower() == artist.lower():
+                    if album == "All Albums" or song['album'].lower() == album.lower():
+                        tracks.append(song["id"] if "id" in song else song["nid"])
+            self.server.tracks += tracks
+        if station:
+            tracks = self._get_station_json(station)
+            self.server.tracks += tracks
+
         with open('/data/queue.json', 'w') as outfile:
             json.dump(self.server.tracks, outfile)
         self.wfile.write(json.dumps({'result':'ok','message':'{0} tracks added to queue, total {1}!'.format(len(tracks),len(self.server.tracks))}).encode("utf-8"))
+
+    def _clear_queue(self):
+        with open('/data/queue.json', 'w') as outfile:
+            json.dump({}, outfile)
+        self.wfile.write(json.dumps({'result':'ok','message':'Queue cleared!'}).encode("utf-8"))
 
     def _shuffle_queue(self):
         random.shuffle(self.server.tracks)
