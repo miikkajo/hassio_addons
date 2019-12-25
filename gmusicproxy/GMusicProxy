@@ -1214,7 +1214,7 @@ class GetHandler(BaseHTTPRequestHandler):
             song = self._get_track(track_id=track)
             if song:
                 queue.append("{0} - {1} - {2}. {3}".format(
-                    song['artist']      if 'artist'      in song else "unknown",
+                    song['artist']      if 'artist'      in song and song['artist'] else "unknown",
                     song['album']       if 'album'       in song else "unknown",
                     song['trackNumber'] if 'trackNumber' in song else "unknown",
                     song['title']       if 'title'       in song else "unknown"

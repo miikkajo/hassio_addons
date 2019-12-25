@@ -16,7 +16,7 @@ $.ajax({
     },
     dataType: "json",
     type: "GET",
-    async: false,
+    async: true,
     success: function (data) {
         console.log(data);
         var options = "<option>All Albums</option>";
@@ -33,6 +33,7 @@ $.ajax({
 }
 function getqueue()
 {
+queue= $("#queue option:selected").text();
 $.ajax({
     url: "{{ host }}/get_queue_json",
     dataType: "json",
@@ -74,55 +75,64 @@ $.ajax({
     }
 });
 }
-function new_track_queue()
-{
-$.ajax({
-    type: "GET",
-    url: "{{ host }}/new_track_queue",
-    data:{
-        artist : $("#artists option:selected").text(),
-        album : $("#albums option:selected").text()
-    },
-    success: function (data) {
-        alert(data);
-    },
-    error(jqXHR, textStatus, errorThrown) {
-        alert('Something wrong happened because: ' + errorThrown)
-    }
-});
-getqueue();	
-}
 
-function append_to_queue()
-{
-$.ajax({
-    type: "GET",
-    url: "{{ host }}/append_to_track_queue",
-    data:{
-        artist : $("#artists option:selected").text(),
-        album : $("#albums option:selected").text()
-    },
-    success: function (data) {
-        alert(data);
-    }
-});
-getqueue();	
-}
 $(document).ready(function(){
-$('.artists').select2();
-$('.albums').select2();
-$('.queue').select2();
+$('#artists').select2();
+$('#albums').select2();
+$('#queue').select2();
 getartists();
 getalbums();
-getqueue();	
 $(".artists").change(getalbums);
-});</script>
+
+$("#RefreshQueue").click(function()
+{
+    getqueue()
+})
+
+$("#AppendToQueue").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/append_to_track_queue",
+        data:{
+            artist : $("#artists option:selected").text(),
+            album : $("#albums option:selected").text()
+        },
+        success: function (data) {
+            alert(data);
+        }
+    });
+})
+
+$("#NewQueue").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/new_track_queue",
+        data:{
+            artist : $("#artists option:selected").text(),
+            album : $("#albums option:selected").text()
+        },
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
+
+});
+</script>
 </head>
 <body>
-<select style="width: 300px" class="artists" id="artists"></select><br>
-<select style="width: 300px" class="albums" id="albums"></select><br>
-<input type="button" class="appendbtn" value="Append to Queue" onclick="append_to_queue()">
-<input type="button" class="newbtn" value="Create new Queue" onclick="new_track_queue()">
-<select style="width: 300px" class="queue" id="queue"></select><br>
+<select style="width: 300px" id="artists"></select><br>
+<select style="width: 300px" id="albums"></select><br>
+<input type="button" id="AppendToQueue" value="Append to Queue">
+<input type="button" id="NewQueue" value="Create new Queue">
+<p>
+    <select style="width: 300px" id="queue"></select><br>
+    <input type="button" id="RefreshQueue" value="Refresh Queue">
+</p>
 </body>
 </html>
