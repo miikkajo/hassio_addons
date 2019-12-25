@@ -8,6 +8,6 @@ else
     /GMusicProxy -a --host $(bashio::config 'url') -P $(bashio::config 'port')
 fi
 
-
+cp /gui_template.html /data/gui_template.html
 
 
