@@ -1194,110 +1194,7 @@ class GetHandler(BaseHTTPRequestHandler):
                         albums.append("unknown")
                     else:
                         albums.append(song['album'])
-
-        template = """ 
-        <!DOCTYPE html>
-        <html>
-        <head><meta charset="utf-8">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-
-<script>        
-function getalbums()
-{
-        artist = $("#artists option:selected").text();
-        $.ajax({
-            url: "{{ host }}/get_collection_albums_json",
-            data:{
-                artist : $("#artists option:selected").text()
-            },
-            dataType: "json",
-            type: "GET",
-            async: true,
-            success: function (data) {
-                console.log(data);
-                var options = "<option>All Albums</option>";
-                $.each(data, function (key, value) {
-                    options += '<option>' + value + '</option>';
-                });
-                $('#albums option').remove();
-                $('#albums').append(options);
-            },
-            error(jqXHR, textStatus, errorThrown) {
-                alert('Something wrong happened because: ' + errorThrown)
-            }
-        });
-}
-function getartists()
-{
-    $.ajax({
-            url: "{{ host }}/get_collection_artists_json",
-            dataType: "json",
-            type: "GET",
-            async: true,
-            success: function (data) {
-                console.log(data);
-                var options = "<option>All Artists</option>";
-                $.each(data, function (key, value) {
-                    options += '<option>' + value + '</option>';
-                });
-                $('#artists option').remove();
-                $('#artists').append(options);
-            },
-            error(jqXHR, textStatus, errorThrown) {
-                alert('Something wrong happened because: ' + errorThrown)
-            }
-        });
-}
-function new_track_queue()
-{
-    $.ajax({
-            type: "GET",
-            url: "{{ host }}/new_track_queue",
-            data:{
-                artist : $("#artists option:selected").text(),
-                album : $("#albums option:selected").text()
-            },
-            success: function (data) {
-                alert(data);
-            },
-            error(jqXHR, textStatus, errorThrown) {
-                alert('Something wrong happened because: ' + errorThrown)
-            }
-        });
-}
-
-function append_to_queue()
-{
-    $.ajax({
-            type: "GET",
-            url: "{{ host }}/append_to_track_queue",
-            data:{
-                artist : $("#artists option:selected").text(),
-                album : $("#albums option:selected").text()
-            },
-            success: function (data) {
-                alert(data);
-            }
-        });
-}
-$(document).ready(function(){
-  $('.artists').select2();
-  $('.albums').select2();
-  getartists();
-  getalbums();
-  $(".artists").change(getalbums);
-});</script>
-        </head>
-        <body>
-        <select style="width: 300px" class="artists" id="artists"></select><br>
-        <select style="width: 300px" class="albums" id="albums"></select><br>
-        <input type="button" class="appendbtn" value="Append to Queue" onclick="append_to_queue()">
-        <input type="button" class="newbtn" value="Create new Queue" onclick="new_track_queue()">
-        </body>
-        </html>"""
-        html=Template(template).render(host=config['host'])
+        html=Template('gui_template.html').render(host=config['host'])
         self.wfile.write(html.encode("utf-8"))
     
 
@@ -1982,7 +1879,7 @@ if __name__ == "__main__":
     try:
         with open('/data/queue.json',"r") as inputfile:
             server.tracks = json.load(inputfile)
-    except IOError:
+    except:
         logger.info('unable to load queue from file')
         server.tracks = []
 
@@ -1991,7 +1888,7 @@ if __name__ == "__main__":
             server.track_index = int(json.load(inputfile))
             if server.track_index < 0 or server.track_index > (len(server.tracks) -1):
                 server.track_index = 0
-    except IOError:
+    except:
         logger.info('unable to track_index from file')
         server.track_index = 0
 
