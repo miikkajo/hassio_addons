@@ -1245,6 +1245,7 @@ class GetHandler(BaseHTTPRequestHandler):
     def _clear_queue(self):
         with open('/data/queue.json', 'w') as outfile:
             json.dump({}, outfile)
+        self.server.tracks = []
         self.wfile.write(json.dumps({'result':'ok','message':'Queue cleared!'}).encode("utf-8"))
 
     def _shuffle_queue(self):
