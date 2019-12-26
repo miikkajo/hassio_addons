@@ -18,7 +18,6 @@ $.ajax({
     type: "GET",
     async: true,
     success: function (data) {
-        console.log(data);
         var options = "<option>All Albums</option>";
         $.each(data, function (key, value) {
             options += '<option>' + value + '</option>';
@@ -40,7 +39,6 @@ $.ajax({
     type: "GET",
     async: true,
     success: function (data) {
-        console.log(data);
         var options = "<option>Current Queue</option>";
         $.each(data, function (key, value) {
             options += '<option>' + value + '</option>';
@@ -62,7 +60,6 @@ $.ajax({
     type: "GET",
     async: true,
     success: function (data) {
-        console.log(data);
         var options = "<option>All Artists</option>";
         $.each(data, function (key, value) {
             options += '<option>' + value + '</option>';
@@ -83,11 +80,10 @@ $.ajax({
     dataType: "json",
     type: "GET",
     async: true,
-    success: function (data) {
-        console.log(data);
+    success: function (result) {
         var options = "";
-        $.each(data, function (key, value) {
-            options += '<option>' + value + '</option>';
+        $.each(result, function (key, value) {
+            options += '<option value="'+value.id+'">' + value.name + '</option>';
         });
         $('#stations option').remove();
         $('#stations').append(options);
@@ -98,50 +94,69 @@ $.ajax({
 });
 }
 
+function getplaylists()
+{
+$.ajax({
+    url: "{{ host }}/get_playlists_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (result) {
+        var options = "";
+        $.each(result, function (key, value) {
+            options += '<option value="'+value.id+'">' + value.name + '</option>';
+        });
+        $('#playlists option').remove();
+        $('#playlists').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
+function append_to_queue(type)
+{
+    switch (type){
+        case 'library':
+            var data = {
+                artist : $("#artists option:selected").text(),
+                album : $("#albums option:selected").text()
+            }
+            break;
+        case 'station':
+            var data = {station : $("#stations option:selected").val()}
+            break;
+        case 'playlist':
+            var data = {playlist : $("#playlists option:selected").val()}    
+            break;                        
+    }
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/append_to_queue",
+        data: data,
+        success: function (result) {
+            alert(result);
+        }
+    });
+}
+
 $(document).ready(function(){
 $('#artists').select2();
 $('#albums').select2();
 $('#stations').select2();
+$('#playlists').select2();
 $('#queue').select2();
 getartists();
 getalbums();
 getstations();
+getplaylists();
+
 $("#artists").change(getalbums);
-
-$("#RefreshQueue").click(function()
-{
-    getqueue()
-})
-
-$("#MLAppendToQueue").click(function()
-{
-    $.ajax({
-        type: "GET",
-        url: "{{ host }}/append_to_track_queue",
-        data:{
-            artist : $("#artists option:selected").text(),
-            album : $("#albums option:selected").text()
-        },
-        success: function (data) {
-            alert(data);
-        }
-    });
-})
-
-$("#STAppendToQueue").click(function()
-{
-    $.ajax({
-        type: "GET",
-        url: "{{ host }}/append_to_track_queue",
-        data:{
-            station : $("#stations option:selected").text()
-        },
-        success: function (data) {
-            alert(data);
-        }
-    });
-})
-
+$("#RefreshQueue").click(function(){getqueue()})
+$("#MLAppendToQueue").click(function(){append_to_queue('station');})
+$("#STAppendToQueue").click(function(){append_to_queue('station');})
+$("#PLAppendToQueue").click(function(){append_to_queue('playlist');})
 $("#ShuffleQueue").click(function()
 {
     $.ajax({
@@ -180,6 +195,9 @@ $("#ClearQueue").click(function()
 <p>Stations</p>
 <p><select style="width: 400px" id="stations"></select></p>
 <input type="button" id="STAppendToQueue" value="Append to Queue">
+<p>Playlists</p>
+<p><select style="width: 400px" id="playlists"></select></p>
+<input type="button" id="PLAppendToQueue" value="Append to Queue">
 <p>Queue</p>
 <p>
     <select style="width: 400px" id="queue"></select><input type="button" id="RefreshQueue" value="Refresh">

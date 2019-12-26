@@ -241,32 +241,20 @@ class GetHandler(BaseHTTPRequestHandler):
         elif parsedPath.path == "/clear_queue":
             self._send_headers(200, 'text/html')
             self._clear_queue()
-        elif parsedPath.path == "/new_track_queue":
+        elif parsedPath.path == "/append_to_queue":
             self._send_headers(200, 'text/html')
-            self.server.tracks = []
-            self.server.track_index = 0
-            artist  = None
-            album   = None
-            station = None
-            with open('/data/track_index', 'w') as outfile:
-                json.dump(self.server.track_index, outfile)
+            artist  = ""
+            album   = ""
+            station = ""
+            playlist = ""
             if "station" in params:
                 station = params["station"][0]
-            else:
-                artist = params["artist"][0] if "artist" in params else "All Artists",
+            if "playlist" in params:
+                playlist = params["playlist"][0]
+            if "album" in params:
+                artist = params["artist"][0] if "artist" in params else "All Artists"
                 album  = params["album"][0] if "album" in params else "All Albums"        
-            self._append_to_track_queue(station=station,artist=artist,album=album)
-        elif parsedPath.path == "/append_to_track_queue":
-            self._send_headers(200, 'text/html')
-            artist  = None
-            album   = None
-            station = None
-            if "station" in params:
-                station = params["station"][0]
-            else:
-                artist = params["artist"][0] if "artist" in params else "All Artists",
-                album  = params["album"][0] if "album" in params else "All Albums"        
-            self._append_to_track_queue(station=station,artist=artist,album=album)
+            self._append_to_queue(station=station,artist=artist,album=album,playlist=playlist)
         elif parsedPath.path == "/get_queue_json":
             self._send_headers(200, 'application/json')
             self._get_queue_json()
@@ -551,6 +539,11 @@ class GetHandler(BaseHTTPRequestHandler):
         logger.debug("Fetching list of songs in collection")
         with self.server.lock:
            self.server.allSongsCache = self._robust_retry(lambda: api.get_all_songs())
+
+    def _fetch_playlist_cache(self):
+        logger.debug("Fetching list of playlists in collection")
+        with self.server.lock:
+            self.server.allPlaylistsCache = self._robust_retry(lambda: api.get_all_user_playlist_contents()) 
 
     def _icy_name(self, album=None, artist=None, title=None):
         return ("%s /// %s /// %s" % (artist, album, title)).encode("utf-8")
@@ -1223,8 +1216,8 @@ class GetHandler(BaseHTTPRequestHandler):
 
     def _get_queue_json(self):
         queue = []
-        for track in self.server.tracks:
-            song = self._get_track(track_id=track)
+        for track in self.server.tracks:            
+            song = self._get_track_info(track_id=track)
             if song:
                 queue.append("{0} - {1} - {2}. {3}".format(
                     song['artist']      if 'artist'      in song and song['artist'] else "unknown",
@@ -1234,28 +1227,39 @@ class GetHandler(BaseHTTPRequestHandler):
                 ))
         self.wfile.write(json.dumps(queue).encode("utf-8"))
 
-    def _append_to_track_queue(self,artist=None,album=None,station=None):
+    def _append_to_queue(self,artist="",album="",station="",playlist=""):
+        tracks = []
         if artist or album:
-            tracks = []
+            logger.info("add songs to queue:{} - {}".format(artist,album))
             songs = self.server.allSongsCache
             songs.sort(key = lambda i: (i["artist"],i["album"],i["trackNumber"]))
             for song in songs:
                 if artist == "All Artists" or song['artist'].lower() == artist.lower():
                     if album == "All Albums" or song['album'].lower() == album.lower():
-                        tracks.append(song["id"] if "id" in song else song["nid"])
-            self.server.tracks += tracks
+                        tracks.append(song["id"] if "id" in song else song["nid"])            
         if station:
             logger.info("add station to queue:{}".format(station))
-            tracks = self._get_station_json(name=station)
-            self.server.tracks += tracks
+            station_tracks = self._robust_retry(lambda: api.get_station_tracks(station_id=station, num_tracks=9999))
+            for song in station_tracks:
+                logger.info("add song to queue:{}".format(song['title']))
+                tracks.append(song["id"] if "id" in song else song["nid"])
+ 
+        if playlist:
+            logger.info("add playlist to queue:{}".format(playlist))
+            playlist_tracks = self._get_playlist_tracks(playlist_id=playlist)
+            logger.info("playlist_tracks :{}".format(playlist_tracks))
+            for song in playlist_tracks:
+                logger.info("add song to queue:{}".format(song['trackId']))
+                tracks.append(song["trackId"])
 
+        self.server.tracks += tracks
         with open('/data/queue.json', 'w') as outfile:
             json.dump(self.server.tracks, outfile)
         self.wfile.write(json.dumps({'result':'ok','message':'{0} tracks added to queue, total {1}!'.format(len(tracks),len(self.server.tracks))}).encode("utf-8"))
 
     def _clear_queue(self):
         with open('/data/queue.json', 'w') as outfile:
-            json.dump({}, outfile)
+            json.dump('', outfile)
         self.server.tracks = []
         self.wfile.write(json.dumps({'result':'ok','message':'Queue cleared!'}).encode("utf-8"))
 
@@ -1299,9 +1303,12 @@ class GetHandler(BaseHTTPRequestHandler):
             return
         self._get_track_json(track_id=self.server.tracks[self.server.track_index])
 
-    def _get_track(self,track_id):
+    def _get_track_info(self,track_id):
         if track_id == None:
             return
+        if track_id.startswith('T'):
+            return api.get_track_info(track_id)
+            
         for song in self.server.allSongsCache:
             if "id" in song:
                 if song['id'] == track_id:
@@ -1313,41 +1320,31 @@ class GetHandler(BaseHTTPRequestHandler):
     def _get_track_json(self,track_id):
         if track_id == None:
             return
-        self.wfile.write(json.dumps(self._get_track(track_id)).encode("utf-8"))
+        self.wfile.write(json.dumps(self._get_track_info(track_id)).encode("utf-8"))
 
     def _get_playlists_json(self):
         playlists = []
         _all_playlists = self._robust_retry(lambda: api.get_all_playlists())
-        for playlist in _all_playlists:
-            playlists.append(playlist["name"])      
-        self.wfile.write(json.dumps(playlists).encode("utf-8"))
+        self.wfile.write(json.dumps(_all_playlists).encode("utf-8"))
 
-    def _get_playlist_json(self,name,numTracks=999):
-        tracks = []
-        _all_playlists = api.get_all_user_playlist_contents()
-        for playlist in _all_playlists:
-            if playlist["name"] == name:
-                for track in playlist["tracks"]:
-                    tracks.append(track["trackId"])
-            
-        self.wfile.write(json.dumps(tracks).encode("utf-8"))
+    def _get_playlist_tracks(self,playlist_id):
+        if not hasattr(self.server, "allPlaylistsCache"):
+        	self._fetch_playlist_cache()
+        for playlist in self.server.allPlaylistsCache:
+            if playlist["id"] == playlist_id:
+                return playlist["tracks"]
         
     def _get_stations_json(self):
         stations = []
         _all_stations = self._robust_retry(lambda: api.get_all_stations())
-        for station in _all_stations:
-            stations.append(station["name"])
-        self.wfile.write(json.dumps(stations).encode("utf-8"))
+        self.wfile.write(json.dumps(_all_stations).encode("utf-8"))
 
     def _get_station_json(self,name,numTracks=999):
         tracks = []
         _all_stations = self._robust_retry(lambda: api.get_all_stations())
         for station in _all_stations:
             if station["name"] == name:
-                _station = self._robust_retry(lambda: api.get_station_tracks(station_id=station["id"], num_tracks=numTracks))
-                for track in _station:
-                    tracks.append(track["nid"])
-        return tracks
+                return self._robust_retry(lambda: api.get_station_tracks(station_id=station["id"], num_tracks=numTracks))
 
     def _get_collection_json(self):
         if not hasattr(self.server, "allSongsCache"):
@@ -1904,6 +1901,8 @@ if __name__ == "__main__":
     logger.info("Pre-fetching list of songs in collection")
     server.lock = threading.Lock()
     server.allSongsCache = api.get_all_songs()
+    server.allPlaylistsCache = api.get_all_user_playlist_contents()
+    
     try:
         with open('/data/queue.json',"r") as inputfile:
             server.tracks = json.load(inputfile)
