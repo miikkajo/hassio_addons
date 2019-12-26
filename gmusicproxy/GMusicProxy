@@ -271,7 +271,7 @@ class GetHandler(BaseHTTPRequestHandler):
             self._send_headers(200, 'application/json')
             self._fetch_songs_list_cache()
             self._fetch_playlist_cache()
-            json.dumps({'result':'ok'})
+            self.wfile.write(json.dumps({'result':'ok'}).encode("utf-8"))
         #####            
         elif parsedPath.path == "/get_listen_now":
             self._send_headers(
