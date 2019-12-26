@@ -183,7 +183,19 @@ $("#ClearQueue").click(function()
         }
         });
 })
-
+$("#UpdateCache").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/update_cache",
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
 });
 </script>
 </head>
@@ -202,7 +214,7 @@ $("#ClearQueue").click(function()
 <p>
     <select style="width: 400px" id="queue"></select><input type="button" id="RefreshQueue" value="Refresh">
     <p><input type="button" id="ShuffleQueue" value="Shuffle"><input type="button" id="ClearQueue" value="Clear"></p>
-    
 </p>
+<p><input type="button" id="UpdateCache" value="Reload catalog"></p>
 </body>
 </html>
