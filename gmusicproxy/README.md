@@ -21,12 +21,12 @@ Add on will sleep for 3600 sec to wait for configuring oauth credentials
 #### enter to bash session inside container:
 
 find out name of addon container:
-  >sudo docker ps --format '{{.Names}}' |grep gmusicproxy
-  >addon_f8f3f8ff_gmusicproxy
+  #> sudo docker ps --format '{{.Names}}' |grep gmusicproxy  
+  #> addon_f8f3f8ff_gmusicproxy
 
-then using container name start bash session inside container
->sudo docker exec -i -t addon_f8f3f8ff_gmusicproxy bash
->bash-5.0# 
+then using container name start bash session inside container  
+ #> sudo docker exec -i -t addon_f8f3f8ff_gmusicproxy bash  
+ #> bash-5.0# 
 
 #### in bash perform oath:   
 ./GMusicProxy -o
