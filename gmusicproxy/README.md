@@ -26,10 +26,10 @@ find out name of addon container:
 
 then using container name start bash session inside container  
  #> sudo docker exec -i -t addon_f8f3f8ff_gmusicproxy bash  
- #> bash-5.0# 
+ bash-5.0# 
 
 #### in bash perform oath:   
- #> /GMusicProxy -o
+ bash-5.0#  /GMusicProxy -o
 
 #### Copy url from console to browser and authenticate and paste key to back to prompt:
 Visit the following url: [Authentication url]  
