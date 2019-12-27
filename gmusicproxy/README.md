@@ -29,7 +29,7 @@ then using container name start bash session inside container
  #> bash-5.0# 
 
 #### in bash perform oath:   
-./GMusicProxy -o
+ #> /GMusicProxy -o
 
 #### Copy url from console to browser and authenticate and paste key to back to prompt:
 Visit the following url: [Authentication url]  
