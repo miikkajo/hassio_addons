@@ -39,6 +39,9 @@ Done.
 
 This will create mobileclient.cred in /data directory for future oauth logins
 
+### Restart addon
+After credentials file is generated succesfully, restart addon to start gmusicproxy
+
 ***
 # Added extensions
 
