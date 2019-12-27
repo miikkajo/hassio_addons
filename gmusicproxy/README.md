@@ -52,7 +52,8 @@ Queue is stored in queue.json file in /data
 Queue index is also stored in track_index file  
 
 
-## Simple UI for creating Queue for gproxy_player (https://github.com/miikkajo/gmproxy_player)
+## Simple UI for creating Queue for gproxy_player 
+(https://github.com/miikkajo/gmproxy_player)  
 UI is found from default ingress url, from add-on page OPEN WEB UI or from sidebar, if "Show in sidebar" is enabled.
 Or browsing directly to URL:  
 /browser
