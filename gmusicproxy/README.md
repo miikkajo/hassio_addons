@@ -45,6 +45,41 @@ After credentials file is generated succesfully, restart addon to start gmusicpr
 ***
 # Added extensions
 
+## Functions for queue handling
+
+Big idea of gmusicproxy queue is to have static queue that can withstand hass restart  
+Queue is stored in queue.json file in /data  
+Queue index is also stored in track_index file  
+
+
+## Simple UI for creating Queue for gproxy_player (https://github.com/miikkajo/gmproxy_player)
+UI is found from default ingress url, from add-on page OPEN WEB UI or from sidebar, if "Show in sidebar" is enabled.
+Or browsing directly to URL:  
+/browser
+http://192.168.1.1:9999/browser  
+
+### Create new queue of tracks  
+#### clear existing queue 
+/clear_queue  
+http://192.168.1.1:9999/clear_queue  
+
+### Add tracks to queue
+/append_to_track_queue  
+params artist,album,station,playlist
+http://192.168.1.1:9999/append_to_track_queue?artist=death
+
+### List tracks in queue 
+/get_queue_json
+
+### Advance track_index and return track id 
+/next_track  
+
+### Reduce track_index and return track id
+/prev_track  
+
+### Return current track id
+/current_track
+
 ## Functions to return json data for external players
 
 #### Get names of artists in collection:
@@ -66,44 +101,6 @@ http://192.168.1.1:9999/get_tracks_json?artist=William%20Shatner
 /get_track_json   
 params id  
 http://192.168.1.1:9999/get_track_json?id=4cb3a344-65ca-39f4-b1ee-ae27de0cf3ac
-
-#### still in progress:
-/get_stations_json  
-/get_station_json  
-/get_playlists_json  
-/get_playlist_json  
-
-## Functions for queue handling
-**note, work in progress**
-
-Big idea of gmusicproxy queue is to have static queue that can withstand hass restart  
-Queue is stored in queue.json file in /data  
-Queue index is also stored in track_index file
-
-
-### Create new queue of tracks
-#### clear existing queue and generate new 
-/new_track_queue  
-params artist,album
-http://192.168.1.1:9999/new_track_queue?album=has%20been
-
-### Add tracks to queue
-/append_to_track_queue  
-params artist,album  
-http://192.168.1.1:9999/append_to_track_queue?artist=death
-
-### List track id's from queue 
-/get_queue_json
-
-### Advance track_index and return track id 
-/next_track  
-
-### Reduce track_index and return track id
-/prev_track  
-
-### Return current track id
-/current_track
-
 
 
 # GMusicProxy – Google Play Music Proxy
