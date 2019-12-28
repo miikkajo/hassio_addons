@@ -1915,7 +1915,7 @@ if __name__ == "__main__":
             json.dump('', outfile)
         server.tracks = []
 
-    if os.path.exists('/data/queue.json'):
+    if os.path.exists('/data/track_index.json'):
         with open('/data/track_index.json',"r") as inputfile:
             server.track_index = int(json.load(inputfile))
             if server.track_index < 0 or server.track_index > (len(server.tracks) -1):
