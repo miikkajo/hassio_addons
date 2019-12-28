@@ -42,6 +42,25 @@ This will create mobileclient.cred in /data directory for future oauth logins
 #### Restart addon
 After credentials file is generated succesfully, restart addon to start gmusicproxy
 
+## Cannot get to OS to run docker commands ?
+
+If it is not possible to get to OS shell to run docker commands  
+there is Portainer add-on available:  
+https://github.com/hassio-addons/addon-portainer  
+
+With Portainer you can manage containers and get to exec console with web browser.  
+Follow instructions when installing add-on, disable protection mode and start Portainer,  
+then go to Settings and on Hidden containers remove add-on type from filter list.  
+
+Then you can see docker containers on Containers section  
+find addon-gmusicproxy container and click “>_” button on quick actions  
+
+Defaults are command /bin/bash as root, keep those and push Connect and you will have exec console  
+
+There you can type "/GMusicProxy -o " command and make credentials file  
+
+you can use ‘cat /data/mobileclient.cred’ after to check that file was generated  
+
 ***
 # Added extensions
 
