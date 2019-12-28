@@ -15,7 +15,7 @@ https://github.com/M0Rf30/gmusicproxy
 
 ### How to create oauth credentials?
 
-When started addon is started and no credentials file was found 
+After addon is started and no credentials file was found 
 Add on will sleep for 3600 sec to wait for configuring oauth credentials
 
 #### enter to bash session inside container:
