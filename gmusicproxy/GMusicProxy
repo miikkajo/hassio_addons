@@ -1922,7 +1922,7 @@ if __name__ == "__main__":
                 server.track_index = 0
     else:
         with open('/data/track_index.json',"w") as outfile:
-            server.track_index = json.dump('0',outfile)
+            json.dump('0',outfile)
         server.track_index = 0
 
     logger.info("Listening on %s:%s...", config["bind_address"],
