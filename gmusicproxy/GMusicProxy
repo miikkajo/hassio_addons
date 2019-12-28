@@ -1262,6 +1262,9 @@ class GetHandler(BaseHTTPRequestHandler):
         with open('/data/queue.json', 'w') as outfile:
             json.dump('', outfile)
         self.server.tracks = []
+        with open('/data/track_index.json', 'w') as outfile:
+            json.dump('0', outfile)
+        self.server.track_index = 0
         self.wfile.write(json.dumps({'result':'ok','message':'Queue cleared!'}).encode("utf-8"))
 
     def _shuffle_queue(self):
@@ -1279,7 +1282,7 @@ class GetHandler(BaseHTTPRequestHandler):
             self.server.track_index = len(self.server.tracks) - 1
         else:
             self.server.track_index == 0
-        with open('/data/track_index', 'w') as outfile:
+        with open('/data/track_index.json', 'w') as outfile:
             json.dump(self.server.track_index, outfile)
         logger.info("current track_index: %s",self.server.track_index)
         self._get_track_json(self.server.tracks[self.server.track_index])
@@ -1291,7 +1294,7 @@ class GetHandler(BaseHTTPRequestHandler):
             self.server.track_index += 1 
         else:
             self.server.track_index = 0
-        with open('/data/track_index', 'w') as outfile:
+        with open('/data/track_index.json', 'w') as outfile:
             json.dump(self.server.track_index, outfile)
         logger.info("current track_index: %s",self.server.track_index)
         self._get_track_json(self.server.tracks[self.server.track_index])
@@ -1913,12 +1916,12 @@ if __name__ == "__main__":
         server.tracks = []
 
     if os.path.exists('/data/queue.json'):
-        with open('/data/track_index',"r") as inputfile:
+        with open('/data/track_index.json',"r") as inputfile:
             server.track_index = int(json.load(inputfile))
             if server.track_index < 0 or server.track_index > (len(server.tracks) -1):
                 server.track_index = 0
     else:
-        with open('/data/track_index',"w") as outfile:
+        with open('/data/track_index.json',"w") as outfile:
             server.track_index = json.dump('0',outfile)
         server.track_index = 0
 
