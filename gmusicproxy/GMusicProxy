@@ -1904,20 +1904,22 @@ if __name__ == "__main__":
     server.allSongsCache = api.get_all_songs()
     server.allPlaylistsCache = api.get_all_user_playlist_contents()
     
-    try:
+    if os.path.exists('/data/queue.json'):
         with open('/data/queue.json',"r") as inputfile:
             server.tracks = json.load(inputfile)
-    except:
-        logger.info('unable to load queue from file')
+    else:
+        with open('/data/queue.json', 'w') as outfile:
+            json.dump('', outfile)
         server.tracks = []
 
-    try:
+    if os.path.exists('/data/queue.json'):
         with open('/data/track_index',"r") as inputfile:
             server.track_index = int(json.load(inputfile))
             if server.track_index < 0 or server.track_index > (len(server.tracks) -1):
                 server.track_index = 0
-    except:
-        logger.info('unable to track_index from file')
+    else:
+        with open('/data/track_index',"w") as outfile:
+            server.track_index = json.dump('0',outfile)
         server.track_index = 0
 
     logger.info("Listening on %s:%s...", config["bind_address"],
