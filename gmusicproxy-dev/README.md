@@ -1,3 +1,5 @@
+development version
+
 #  HomeAssistant add-on for gmusicproxy (with extensions)
 
 Code forked from:

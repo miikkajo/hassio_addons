@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<script>        
+function getalbums()
+{
+artist = $("#artists option:selected").text();
+$.ajax({
+    url: "{{ host }}/get_collection_albums_json",
+    data:{
+        artist : $("#artists option:selected").text()
+    },
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (data) {
+        var options = "<option>All Albums</option>";
+        $.each(data, function (key, value) {
+            options += '<option>' + value + '</option>';
+        });
+        $('#albums option').remove();
+        $('#albums').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+function getqueue()
+{
+queue= $("#queue option:selected").text();
+$.ajax({
+    url: "{{ host }}/get_queue_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (data) {
+        var options = "<option>Current Queue</option>";
+        $.each(data, function (key, value) {
+            options += '<option>' + value + '</option>';
+        });
+        $('#queue option').remove();
+        $('#queue').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
+function getartists()
+{
+$.ajax({
+    url: "{{ host }}/get_collection_artists_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (data) {
+        var options = "<option>All Artists</option>";
+        $.each(data, function (key, value) {
+            options += '<option>' + value + '</option>';
+        });
+        $('#artists option').remove();
+        $('#artists').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
+function getstations()
+{
+$.ajax({
+    url: "{{ host }}/get_stations_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (result) {
+        var options = "";
+        $.each(result, function (key, value) {
+            options += '<option value="'+value.id+'">' + value.name + '</option>';
+        });
+        $('#stations option').remove();
+        $('#stations').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
+function getplaylists()
+{
+$.ajax({
+    url: "{{ host }}/get_playlists_json",
+    dataType: "json",
+    type: "GET",
+    async: true,
+    success: function (result) {
+        var options = "";
+        $.each(result, function (key, value) {
+            options += '<option value="'+value.id+'">' + value.name + '</option>';
+        });
+        $('#playlists option').remove();
+        $('#playlists').append(options);
+    },
+    error(jqXHR, textStatus, errorThrown) {
+        alert('Something wrong happened because: ' + errorThrown)
+    }
+});
+}
+
+function append_to_queue(type)
+{
+    switch (type){
+        case 'library':
+            var data = {
+                artist : $("#artists option:selected").text(),
+                album : $("#albums option:selected").text()
+            }
+            break;
+        case 'station':
+            var data = {station : $("#stations option:selected").val()}
+            break;
+        case 'playlist':
+            var data = {playlist : $("#playlists option:selected").val()}    
+            break;                        
+    }
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/append_to_queue",
+        data: data,
+        success: function (result) {
+            alert(result);
+        }
+    });
+}
+
+$(document).ready(function(){
+$('#artists').select2();
+$('#albums').select2();
+$('#stations').select2();
+$('#playlists').select2();
+$('#queue').select2();
+getartists();
+getalbums();
+getstations();
+getplaylists();
+
+$("#artists").change(getalbums);
+$("#RefreshQueue").click(function(){getqueue()})
+$("#MLAppendToQueue").click(function(){append_to_queue('library');})
+$("#STAppendToQueue").click(function(){append_to_queue('station');})
+$("#PLAppendToQueue").click(function(){append_to_queue('playlist');})
+$("#ShuffleQueue").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/shuffle_queue",
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
+$("#ClearQueue").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/clear_queue",
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
+$("#UpdateCache").click(function()
+{
+    $.ajax({
+        type: "GET",
+        url: "{{ host }}/update_cache",
+        success: function (data) {
+            alert(data);
+        },
+        error(jqXHR, textStatus, errorThrown) {
+            alert('Something wrong happened because: ' + errorThrown)
+        }
+        });
+})
+});
+</script>
+</head>
+<body>
+<p>Music Library</p>
+<select style="width: 400px" id="artists"></select><br>
+<select style="width: 400px" id="albums"></select><br>
+<input type="button" id="MLAppendToQueue" value="Append to Queue">
+<p>Stations</p>
+<p><select style="width: 400px" id="stations"></select></p>
+<input type="button" id="STAppendToQueue" value="Append to Queue">
+<p>Playlists</p>
+<p><select style="width: 400px" id="playlists"></select></p>
+<input type="button" id="PLAppendToQueue" value="Append to Queue">
+<p>Queue</p>
+<p>
+    <select style="width: 400px" id="queue"></select><input type="button" id="RefreshQueue" value="Refresh">
+    <p><input type="button" id="ShuffleQueue" value="Shuffle"><input type="button" id="ClearQueue" value="Clear"></p>
+</p>
+<p><input type="button" id="UpdateCache" value="Reload catalog"></p>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "gmusicproxy-dev",
+  "version": "0.4.46",
+  "slug": "gmusicproxy-dev",
+  "description": "gmusicproxy development version!",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "startup": "application",
+  "ingress": true,
+  "ingress_port": "9999",
+  "ingress_entry": "browser",
+  "boot": "auto",
+  "homeassistant_api": true,
+  "ports": {
+    "9999/tcp": 9999
+  }
+}

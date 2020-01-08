@@ -1,16 +1,16 @@
 {
   "name": "gmusicproxy",
-  "version": "0.4.46",
+  "version": "0.4.47",
   "slug": "gmusicproxy",
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "application",
-  "url": "https://github.com/miikkajo/hassio_addons/tree/master/gmusicproxy",
   "ingress": true,
   "ingress_port": "9999",
   "ingress_entry": "browser",
   "boot": "auto",
   "homeassistant_api": true,
+  "url": "https://github.com/miikkajo/gmusicproxy"
   "options": {
     "url":"http://192.168.1.2",
     "port":"9999"
