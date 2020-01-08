@@ -10,7 +10,7 @@
   "ingress_entry": "browser",
   "boot": "auto",
   "homeassistant_api": true,
-  "url": "https://github.com/miikkajo/gmusicproxy"
+  "url": "https://github.com/miikkajo/gmusicproxy",
   "options": {
     "url":"http://192.168.1.2",
     "port":"9999"
