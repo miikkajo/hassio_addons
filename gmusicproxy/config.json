@@ -1,10 +1,11 @@
 {
   "name": "gmusicproxy",
-  "version": "0.4.45",
+  "version": "0.4.46",
   "slug": "gmusicproxy",
   "description": "gmusicproxy!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "application",
+  "url": "https://github.com/miikkajo/hassio_addons/tree/master/gmusicproxy"
   "ingress": true,
   "ingress_port": "9999",
   "ingress_entry": "browser",
