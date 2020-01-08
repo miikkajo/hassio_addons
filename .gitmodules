@@ -1,4 +1,0 @@
-[submodule "gmusicproxy-dev"]
-	path = gmusicproxy-dev
-	url = https://github.com/miikkajo/gmusicproxy
-	branch = dev
