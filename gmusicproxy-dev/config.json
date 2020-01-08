@@ -1,6 +1,6 @@
 {
   "name": "gmusicproxy-dev",
-  "version": "0.4.46",
+  "version": "0.4.47",
   "slug": "gmusicproxy-dev",
   "description": "gmusicproxy development version!",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -10,6 +10,15 @@
   "ingress_entry": "browser",
   "boot": "auto",
   "homeassistant_api": true,
+  "url": "https://github.com/miikkajo/gmusicproxy",
+  "options": {
+    "url":"http://192.168.1.2",
+    "port":"9999"
+},
+  "schema": {
+    "url":"url",
+    "port":"port"
+},
   "ports": {
     "9999/tcp": 9999
   }
