@@ -53,8 +53,8 @@ import requests
 from gmusicapi.exceptions import CallFailure
 from jinja2 import Template
 import json
+import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 
 try:
     import daemon
