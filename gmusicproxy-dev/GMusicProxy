@@ -1799,6 +1799,7 @@ def initOauth2(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS):
 
 def loginGM(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS,oauth_credentials='/data/mobileclient.cred'):
     api = gmusicapi.Mobileclient()
+    api.OAUTH_FILEPATH = '/data/mobileclient.cred'
     if config['debug']:
         api.logger = logger
     api.oauth_login(device_id,oauth_credentials)
