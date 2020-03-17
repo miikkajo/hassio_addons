@@ -56,7 +56,6 @@ import json
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 try:
     import daemon
 except Exception:
@@ -1793,11 +1792,12 @@ def getOptions():
 
 def initOauth2(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS):
     api = gmusicapi.Mobileclient()
-    api.perform_oauth(storage_filepath=u'/data/mobileclient.cred',open_browser=False)
+    api.OAUTH_FILEPATH = '/data/mobileclient.cred'
+    api.perform_oauth(open_browser=False,storage_filepath='/data/mobileclient.cred')
     api.oauth_login(device_id)
 
 
-def loginGM(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS,oauth_credentials=u'/data/mobileclient.cred'):
+def loginGM(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS,oauth_credentials='/data/mobileclient.cred'):
     api = gmusicapi.Mobileclient()
     if config['debug']:
         api.logger = logger
