@@ -1,7 +1,0 @@
-{
-  "build_from": {
-    "amd64": "homeassistant/amd64-base-ubuntu:18.04"
-  },
-  "args":{"shm_size":"512M"}
-}
-

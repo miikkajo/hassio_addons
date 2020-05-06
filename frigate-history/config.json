@@ -1,0 +1,33 @@
+{
+    "name": "frigate-history",
+    "version": "0.3.0",
+    "slug": "frigate-history",
+    "description": "frigate-history",
+    "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+    "startup": "application",
+    "ingress": false,
+    "hassio_api": true,
+    "boot": "auto",
+    "map": ["config:rw"],
+    "homeassistant_api": true,
+    "url": "https://github.com/miikkajo/ha-addon_frigate-history/",
+    "services": ["mqtt:want"],
+    "options": {
+      "mqtt_topic_prefix": "frigate",
+      "history_size": 20,
+      "mqtt_host": "localhost",
+      "mqtt_port": 1883,
+      "mqtt_username": "",
+      "mqtt_password": ""
+  },
+    "schema": {
+      "mqtt_topic_prefix": "str",
+      "history_size": "int",
+      "mqtt_host": "str",
+      "mqtt_port": "int",
+      "mqtt_username": "str",
+      "mqtt_password": "password"
+  },
+    "ports": {
+    }
+}

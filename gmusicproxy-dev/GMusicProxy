@@ -1793,7 +1793,8 @@ def getOptions():
 def initOauth2(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS):
     api = gmusicapi.Mobileclient()
     api.OAUTH_FILEPATH = '/data/mobileclient.cred'
-    api.perform_oauth(open_browser=False,storage_filepath='/data/mobileclient.cred')
+    if api.perform_oauth(open_browser=False,storage_filepath='/data/mobileclient.cred'):
+      logger.info('Token generated, please restart GMusicProxy addon!')
 
 def loginGM(device_id=gmusicapi.Mobileclient.FROM_MAC_ADDRESS,oauth_credentials='/data/mobileclient.cred'):
     api = gmusicapi.Mobileclient()

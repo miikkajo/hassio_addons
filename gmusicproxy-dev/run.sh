@@ -9,9 +9,5 @@ if [ ! -f "/data/mobileclient.cred" ]; then
     sleep 3600
     bashio::log.info "Not configured exiting..."
 else
-  if [[ $ingress_enabled == "true" ]]; then
-    /GMusicProxy --host "$(bashio::addon.ingress_entry)" -P $(bashio::config 'port')
-  else
-    /GMusicProxy --host $(bashio::config 'url') -P $(bashio::config 'port')
-  fi
+    /GMusicProxy --host "$(bashio::addon.ingress_entry)"
 fi
