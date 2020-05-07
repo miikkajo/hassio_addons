@@ -59,14 +59,14 @@ def on_log(mqttc, obj, level, string):
 
 
 HISTORY_SIZE = int(os.environ.get('HISTORY_SIZE',20))
+MQTT_PORT = int(os.environ.get('MQTT_PORT',1883))
 topic = f"{os.environ.get('MQTT_TOPIC_PREFIX', 'frigate')}/+/+/snapshot"
-print (f"history size: {HISTORY_SIZE}")
 client = mqtt.Client()
 client.username_pw_set(username=os.environ.get('MQTT_USER'),password=os.environ.get('MQTT_PASSWORD'))
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_subscribe = on_subscribe
 #client.on_log = on_log
-client.connect(host=os.environ.get('MQTT_HOST'),port=os.environ.get('MQTT_PORT'))
+client.connect(host=os.environ.get('MQTT_HOST'),port=MQTT_PORT)
 client.subscribe(topic,2)
 client.loop_forever()

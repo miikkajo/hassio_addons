@@ -1,7 +1,7 @@
 #!/bin/bash
 rm -rf gmusicproxy
 rm -rf gmusicproxy-dev
-rm -rf ha-addon-frigate
+rm -rf frigate-history
 git clone https://github.com/miikkajo/gmusicproxy ./gmusicproxy
 rm -rf gmusicproxy/.git 
 git clone --branch dev https://github.com/miikkajo/gmusicproxy gmusicproxy-dev

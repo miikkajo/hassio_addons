@@ -1,6 +1,6 @@
 {
     "name": "frigate-history",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "slug": "frigate-history",
     "description": "frigate-history",
     "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
